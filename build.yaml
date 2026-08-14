@@ -1,0 +1,19 @@
+# Build matrix for GitHub Actions.
+#
+# The SparkFun Pro Micro RP2040 is USB-only, so there is a single firmware
+# image (no left/right, no settings_reset — to wipe an RP2040 you flash
+# flash_nuke.uf2 instead).
+---
+include:
+  - board: sparkfun_pro_micro_rp2040//zmk
+    shield: mono34
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: mono34
+
+  # Same firmware without ZMK Studio, in case you want the USB console for
+  # logging instead. Uncomment CONFIG_ZMK_USB_LOGGING in mono34.conf to use it,
+  # and drop the &studio_unlock binding from the media layer of the keymap.
+  # - board: sparkfun_pro_micro_rp2040//zmk
+  #   shield: mono34
+  #   artifact-name: mono34-nostudio

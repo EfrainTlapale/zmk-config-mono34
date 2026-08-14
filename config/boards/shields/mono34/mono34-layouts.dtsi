@@ -1,0 +1,61 @@
+/*
+ * Physical layout for the mono34: a 34-key unibody (monoblock) with a
+ * Sweep/Ferris-style column stagger and a joined 10-column grid.
+ *
+ * Units are 1/100 of a key, so a 1u key is 100x100. The column stagger
+ * offsets (pinky +95, ring +32, middle 0, index +28, inner +42) are taken
+ * from the Ferris/Sweep layout; the only difference here is that the two
+ * halves are butted together instead of separated, which is what makes it
+ * a monoblock.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <physical_layouts.dtsi>
+
+/ {
+    mono34_layout: mono34_layout {
+        compatible = "zmk,physical-layout";
+        display-name = "Default";
+
+        keys  //                     w   h    x    y   rot   rx   ry
+            = <&key_physical_attrs 100 100    0   95     0    0    0>
+            , <&key_physical_attrs 100 100  100   32     0    0    0>
+            , <&key_physical_attrs 100 100  200    0     0    0    0>
+            , <&key_physical_attrs 100 100  300   28     0    0    0>
+            , <&key_physical_attrs 100 100  400   42     0    0    0>
+            , <&key_physical_attrs 100 100  500   42     0    0    0>
+            , <&key_physical_attrs 100 100  600   28     0    0    0>
+            , <&key_physical_attrs 100 100  700    0     0    0    0>
+            , <&key_physical_attrs 100 100  800   32     0    0    0>
+            , <&key_physical_attrs 100 100  900   95     0    0    0>
+
+            , <&key_physical_attrs 100 100    0  195     0    0    0>
+            , <&key_physical_attrs 100 100  100  132     0    0    0>
+            , <&key_physical_attrs 100 100  200  100     0    0    0>
+            , <&key_physical_attrs 100 100  300  128     0    0    0>
+            , <&key_physical_attrs 100 100  400  142     0    0    0>
+            , <&key_physical_attrs 100 100  500  142     0    0    0>
+            , <&key_physical_attrs 100 100  600  128     0    0    0>
+            , <&key_physical_attrs 100 100  700  100     0    0    0>
+            , <&key_physical_attrs 100 100  800  132     0    0    0>
+            , <&key_physical_attrs 100 100  900  195     0    0    0>
+
+            , <&key_physical_attrs 100 100    0  295     0    0    0>
+            , <&key_physical_attrs 100 100  100  232     0    0    0>
+            , <&key_physical_attrs 100 100  200  200     0    0    0>
+            , <&key_physical_attrs 100 100  300  228     0    0    0>
+            , <&key_physical_attrs 100 100  400  242     0    0    0>
+            , <&key_physical_attrs 100 100  500  242     0    0    0>
+            , <&key_physical_attrs 100 100  600  228     0    0    0>
+            , <&key_physical_attrs 100 100  700  200     0    0    0>
+            , <&key_physical_attrs 100 100  800  232     0    0    0>
+            , <&key_physical_attrs 100 100  900  295     0    0    0>
+
+            , <&key_physical_attrs 100 100  300  370     0    0    0>
+            , <&key_physical_attrs 100 100  400  370     0    0    0>
+            , <&key_physical_attrs 100 100  500  370     0    0    0>
+            , <&key_physical_attrs 100 100  600  370     0    0    0>
+            ;
+    };
+};
