@@ -8,11 +8,12 @@ Sweep/Ferris-style column stagger, built for a **SparkFun Pro Micro RP2040**
 ╭─────┬─────┬─────┬─────┬─────╮ ╭─────┬─────┬─────┬─────┬─────╮
 │  Q  │  W  │  E  │  R  │  T  │ │  Y  │  U  │  I  │  O  │  P  │
 ├─────┼─────┼─────┼─────┼─────┤ ├─────┼─────┼─────┼─────┼─────┤
-│  A  │  S  │  D  │  F  │  G  │ │  H  │  J  │  K  │  L  │  ;  │
+│  A  │  S  │  D  │  F  │  G  │ │  H  │  J  │  K  │  L  │  :  │
 ├─────┼─────┼─────┼─────┼─────┤ ├─────┼─────┼─────┼─────┼─────┤
-│  Z  │  X  │  C  │  V  │  B  │ │  N  │  M  │  ,  │  .  │  /  │
+│  Z  │  X  │  C  │  V  │  B  │ │  N  │  M  │  ,  │  .  │ GUI │
+│     │     │     │     │     │ │     │     │     │     │  /  │
 ╰─────┴─────┴─────┼─────┼─────┤ ├─────┼─────┼─────┴─────┴─────╯
-                  │ NAV │ SFT │ │ CTL │ SYM │
+                  │ EXT │ SFT │ │ CTL │ SYM │
                   │ SPC │     │ │ ENT │     │
                   ╰─────┴─────╯ ╰─────┴─────╯
 ```
@@ -90,12 +91,18 @@ actually routed. If your diodes point the other way, set
 | - | ----- | -------------------------------- |
 | 0 | Base  | default                          |
 | 1 | Sym   | hold right inner thumb           |
-| 2 | Nav   | hold left inner thumb (Space)    |
-| 3 | Num   | Sym + Nav together (tri-layer)   |
-| 4 | Media | hold right pinky on Num          |
-| 5 | Mouse | hold left index home row on Nav  |
+| 2 | Ext   | hold left inner thumb (Space)    |
+| 3 | Num   | Sym + Ext together (tri-layer)   |
+| 4 | Misc  | hold right pinky on Num          |
+| 5 | Mouse | hold E on Ext                    |
 
-`&bootloader` and `&sys_reset` live on the Media layer's bottom row.
+`&sys_reset` and `&bootloader` live on the Misc layer's left column.
+
+Extras carried over from the endgame config: **J + K** chorded is `ESC`
+(50 ms window, 150 ms prior-idle guard), the left shift thumb is a
+quick-release sticky shift, and right `/` is a `LGUI` hold-tap. The `Ext`
+layer has held mods on the home row and sticky mods on the row below,
+plus `HYPER` (`LS(LC(LA(LGUI)))`) on the left index inner column.
 
 ## Building
 
