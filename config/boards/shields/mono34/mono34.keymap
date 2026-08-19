@@ -110,7 +110,7 @@
             display-name = "Media";
             bindings = <
         //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
-          &studio_unlock &none    &none      &none      &none          &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_NEXT &kp C_PP
+            &none      &none      &none      &none      &none          &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_NEXT &kp C_PP
         //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
             &none      &none      &none      &none      &none          &kp C_BRI_DN &kp C_BRI_UP &none    &none      &none
         //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤

@@ -17,8 +17,8 @@
         zmk,kscan = &kscan0;
         zmk,physical-layout = &mono34_layout;
         // NOTE: deliberately no `zmk,matrix-transform` here. The transform is
-        // attached to the physical layout above instead, which is what ZMK
-        // Studio requires.
+        // attached to the physical layout above instead, which is the current
+        // ZMK convention for shields that declare a physical layout.
     };
 
     /*
@@ -49,8 +49,12 @@
      * If your PCB has the diodes the other way round, change this to
      * "row2col" and swap the GPIO flags between the two lists.
      *
-     * Pin numbers are Pro Micro pad numbers (D0..D21), not RP2040 GPIO
-     * numbers, so this shield works on any pro_micro-compatible board.
+     * Pins are addressed as raw RP2040 GPIOs (&gpio0 N == GPN on the
+     * silkscreen) rather than through the &pro_micro nexus. The nexus uses
+     * Arduino Pro Micro pad numbers, which do NOT line up with GP numbers
+     * above D9 (D10=GP21, D14=GP20, D15=GP22, D16=GP23, A0..A3=GP26..GP29)
+     * and which swap D0/D1; it also has no entry at all for GP13. Using
+     * &gpio0 keeps this file readable straight off the board.
      */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
@@ -58,23 +62,23 @@
         diode-direction = "col2row";
 
         col-gpios
-            = <&pro_micro 0 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 1 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 2 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 3 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 4 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 5 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 6 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 7 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 8 GPIO_ACTIVE_HIGH>
-            , <&pro_micro 9 GPIO_ACTIVE_HIGH>
+            = <&gpio0 0 GPIO_ACTIVE_HIGH>
+            , <&gpio0 1 GPIO_ACTIVE_HIGH>
+            , <&gpio0 2 GPIO_ACTIVE_HIGH>
+            , <&gpio0 3 GPIO_ACTIVE_HIGH>
+            , <&gpio0 4 GPIO_ACTIVE_HIGH>
+            , <&gpio0 5 GPIO_ACTIVE_HIGH>
+            , <&gpio0 6 GPIO_ACTIVE_HIGH>
+            , <&gpio0 7 GPIO_ACTIVE_HIGH>
+            , <&gpio0 8 GPIO_ACTIVE_HIGH>
+            , <&gpio0 9 GPIO_ACTIVE_HIGH>
             ;
 
         row-gpios
-            = <&pro_micro 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&pro_micro 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 17 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
     };
 };

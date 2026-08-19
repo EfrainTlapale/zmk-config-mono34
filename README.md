@@ -28,33 +28,54 @@ copied between this keymap and any other 34-key ZMK config unchanged.
 ## Wiring
 
 4 rows × 10 columns, `col2row` (diode cathodes face the row lines — the stripe
-on the diode points at the row). Pin numbers in the overlay are **Pro Micro pad
-numbers**, not RP2040 GPIO numbers, which is what keeps the shield portable
-across controllers.
+on the diode points at the row). Pins are addressed as **raw RP2040 GPIOs**
+(`&gpio0 N` is GPN), so the numbers here match the silkscreen on the controller.
 
-| Matrix | Pro Micro pad | RP2040 GPIO | Direction |
-| ------ | ------------- | ----------- | --------- |
-| col 0  | D0            | GPIO1       | output    |
-| col 1  | D1            | GPIO0       | output    |
-| col 2  | D2            | GPIO2       | output    |
-| col 3  | D3            | GPIO3       | output    |
-| col 4  | D4            | GPIO4       | output    |
-| col 5  | D5            | GPIO5       | output    |
-| col 6  | D6            | GPIO6       | output    |
-| col 7  | D7            | GPIO7       | output    |
-| col 8  | D8            | GPIO8       | output    |
-| col 9  | D9            | GPIO9       | output    |
-| row 0  | D18 / A0      | GPIO26      | input     |
-| row 1  | D19 / A1      | GPIO27      | input     |
-| row 2  | D20 / A2      | GPIO28      | input     |
-| row 3  | D21 / A3      | GPIO29      | input     |
+| Matrix | RP2040 GPIO | Direction |
+| ------ | ----------- | --------- |
+| col 0  | GPIO0       | output    |
+| col 1  | GPIO1       | output    |
+| col 2  | GPIO2       | output    |
+| col 3  | GPIO3       | output    |
+| col 4  | GPIO4       | output    |
+| col 5  | GPIO5       | output    |
+| col 6  | GPIO6       | output    |
+| col 7  | GPIO7       | output    |
+| col 8  | GPIO8       | output    |
+| col 9  | GPIO9       | output    |
+| row 0  | GPIO13      | input     |
+| row 1  | GPIO14      | input     |
+| row 2  | GPIO15      | input     |
+| row 3  | GPIO16      | input     |
 
-Note that D0 and D1 are **crossed** on this board (D0 → GPIO1, D1 → GPIO0).
-That is handled by the board's `pro_micro` connector node, so you only ever
-think in D-numbers.
+### Why not `&pro_micro`?
 
-Left unused and available for an encoder, LEDs, or a trackball: **D10**
-(GPIO21), **D14** (GPIO20), **D15** (GPIO22), **D16** (GPIO23).
+The `&pro_micro` nexus takes **Arduino Pro Micro pad numbers (D0..D21)**, which
+are not the same as GP numbers on an RP2040 Pro Micro:
+
+| Pro Micro pad | RP2040 GPIO |
+| ------------- | ----------- |
+| D0            | GPIO1       |
+| D1            | GPIO0       |
+| D2..D9        | GPIO2..GPIO9|
+| D10           | GPIO21      |
+| D14           | GPIO20      |
+| D15           | GPIO22      |
+| D16           | GPIO23      |
+| D18..D21 (A0..A3) | GPIO26..GPIO29 |
+
+So `&pro_micro 14` is GPIO20, not GPIO14 — a silent mis-wiring if you read the
+numbers off the board — and D0/D1 are crossed. The nexus also has **no entry for
+GPIO11..GPIO19**, because those pads are not part of the 32u4 footprint; asking
+for one is a hard devicetree error:
+
+```
+devicetree error: child specifier for <Node /kscan> (b'\x00\x00\x00\r...')
+does not appear in <Property 'gpio-map' at '/connector'>
+```
+
+Addressing `&gpio0` directly sidesteps all of that, at the cost of tying the
+shield to RP2040 controllers.
 
 These pins are a starting point — change them in
 `config/boards/shields/mono34/mono34.overlay` to match however your PCB is
@@ -93,13 +114,6 @@ that happens, pin `revision:` to a known-good commit SHA rather than to v0.3.0.
 To fully wipe the flash — the RP2040 equivalent of a settings reset — flash
 [`flash_nuke.uf2`](https://datasheets.raspberrypi.com/soft/flash_nuke.uf2)
 first, then reflash the firmware.
-
-## ZMK Studio
-
-The build has ZMK Studio enabled (`studio-rpc-usb-uart` snippet +
-`CONFIG_ZMK_STUDIO=y`), so the keymap can be edited live at
-[zmk.studio](https://zmk.studio) over USB. Press `&studio_unlock` — the top-left
-key on the Media layer — to unlock it for editing.
 
 ## Notes on the controller
 
