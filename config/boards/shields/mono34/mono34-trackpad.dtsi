@@ -101,7 +101,7 @@
          */
         // switch-xy;
         // flip-x;
-        // flip-y;
+        flip-y;
     };
 };
 
