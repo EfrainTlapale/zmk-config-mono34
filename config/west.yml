@@ -1,11 +1,27 @@
+# ZMK does not carry the Waveshare RP2040-Zero board upstream yet, so this
+# tracks nmunnich's fork, which adds `app/boards/arm/waveshare_rp2040_zero`
+# (board id `rp2040_zero`) and its `&zero_d` GPIO nexus.
+#
+# Pinned to a known-good SHA rather than a branch name: the fork is a personal
+# branch and can be rebased or force-pushed out from under us.
+---
 manifest:
   remotes:
-    - name: zmkfirmware
-      url-base: https://github.com/zmkfirmware
+    - name: nmunnich
+      url-base: https://github.com/nmunnich
+    - name: aym1607
+      url-base: https://github.com/AYM1607
   projects:
     - name: zmk
-      remote: zmkfirmware
-      revision: main
+      remote: nmunnich
+      # revision: rp2040zero
+      revision: aa2294c
       import: app/west.yml
+    # Driver for Azoteq IQS5xx trackpads (TPS43 / TPS65 / ...). Pinned to a
+    # commit rather than `main` so a firmware rebuild is reproducible; bump it
+    # deliberately when you want upstream changes.
+    - name: zmk-driver-azoteq-iqs5xx
+      remote: aym1607
+      revision: 27321f0232b50f0af31eb27ff97d539933467ea4
   self:
     path: config

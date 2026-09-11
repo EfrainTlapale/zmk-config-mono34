@@ -2,4 +2,6 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    # Pinned to v0.3 to match the Zephyr/toolchain vintage of the ZMK fork
+    # referenced in config/west.yml.
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3

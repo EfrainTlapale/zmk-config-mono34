@@ -2,6 +2,7 @@ file_format: "1"
 id: mono34
 name: mono34
 type: shield
-requires: [pro_micro]
+requires: [rp2040_zero]
 features:
   - keys
+  - pointer

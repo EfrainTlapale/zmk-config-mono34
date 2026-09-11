@@ -1,0 +1,121 @@
+/*
+ * TPS43-201A-S trackpad (43x43 mm, Azoteq IQS572) for the mono34.
+ *
+ * Driver: https://github.com/AYM1607/zmk-driver-azoteq-iqs5xx (added as a
+ * module in config/west.yml). TPS43 is one of the two models the driver author
+ * lists as tested.
+ *
+ * ---------------------------------------------------------------------------
+ * Wiring: Waveshare RP2040-Zero pin -> TPS43 FPC pin
+ * ---------------------------------------------------------------------------
+ *   3V3   -> VDDHI + VREG (the module runs at 3.3 V)
+ *   GND   -> GND
+ *   GP14  -> SDA    (I2C1 SDA)
+ *   GP15  -> SCL    (I2C1 SCL)
+ *   GP26  -> RDY
+ *   GP27  -> NRST
+ *
+ * The key matrix owns GP0..GP13, so the edge pins left are GP14, GP15 and
+ * GP26..GP29 -- all on the same edge as 3V3 and GND, which keeps every
+ * trackpad wire on one side of the board. GP14/GP15 is an I2C1 SDA/SCL pair;
+ * RDY and NRST are plain GPIOs, and taking GP26/GP27 for them leaves GP28 and
+ * GP29 free for something else.
+ *
+ * Add 2.2k-4.7k pull-ups from SDA and SCL to 3V3 if you can. The TPS43 module
+ * has none, so this file also turns on the RP2040's internal pull-ups as a
+ * fallback and drops the bus to 100 kHz, which those weak (~55k) pull-ups can
+ * actually drive. With real external pull-ups you can raise clock-frequency
+ * back to 400000.
+ *
+ * NOTE: the &pinctrl block below is RP2040-specific.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
+#include <input/processors.dtsi>
+
+/*
+ * The board enables the ADC with a pinctrl state covering GP26..GP29, which
+ * includes RDY and NRST. Nothing on a USB-only board reads the ADC, so turn it
+ * off rather than leave it able to steal those pins if CONFIG_ADC ever gets
+ * switched on.
+ */
+&adc {
+    status = "disabled";
+};
+
+/*
+ * Move I2C1 off its board default (GP22/GP23, solder pads on the back of the
+ * RP2040-Zero) onto the edge pins GP14/GP15.
+ */
+&i2c1_default {
+    group1 {
+        pinmux = <I2C1_SDA_P14>;
+        input-enable;
+        bias-pull-up;
+    };
+
+    group2 {
+        pinmux = <I2C1_SCL_P15>;
+        input-enable;
+        bias-pull-up;
+    };
+};
+
+&i2c1 {
+    status = "okay";
+    clock-frequency = <100000>;
+
+    trackpad: trackpad@74 {
+        compatible = "azoteq,iqs5xx";
+        reg = <0x74>;
+        status = "okay";
+
+        rdy-gpios = <&zero_d 26 GPIO_ACTIVE_HIGH>;
+        /* NRST is active low on the IQS5xx. */
+        reset-gpios = <&zero_d 27 GPIO_ACTIVE_LOW>;
+
+        /* Gestures the driver turns into HID buttons. */
+        one-finger-tap;      /* tap            -> left click  */
+        two-finger-tap;      /* two-finger tap -> right click */
+        press-and-hold;      /* tap and hold   -> held left click, for dragging */
+        press-and-hold-time = <250>;
+
+        /* Two-finger scroll, both axes. */
+        scroll;
+        natural-scroll-y;
+
+        /*
+         * Feel: bottom-beta is the slow-speed filter (0 = smoothest/laggiest,
+         * 255 = least filtered/most responsive), stationary-threshold is how
+         * many pixels count as "not moving".
+         */
+        bottom-beta = <5>;
+        stationary-threshold = <5>;
+
+        /*
+         * Orientation. Uncomment whichever of these makes the cursor follow
+         * your finger once the pad is physically mounted — it depends on which
+         * way the FPC tail points.
+         */
+        // switch-xy;
+        // flip-x;
+        // flip-y;
+    };
+};
+
+/ {
+    trackpad_listener: trackpad_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackpad>;
+
+        /*
+         * The driver reports raw counts 1:1. If the cursor feels too slow or
+         * too fast, scale it here — the two cells are multiplier and divisor:
+         *
+         *   input-processors = <&zip_xy_scaler 3 2>;   // 1.5x faster
+         *   input-processors = <&zip_xy_scaler 1 2>;   // half speed
+         */
+    };
+};

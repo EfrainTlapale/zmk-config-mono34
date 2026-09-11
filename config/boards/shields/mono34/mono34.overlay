@@ -1,5 +1,5 @@
 /*
- * mono34 - 34 key unibody, Sweep-style layout, Pro Micro interconnect.
+ * mono34 - 34 key unibody, Sweep-style layout, Waveshare RP2040-Zero.
  *
  * SPDX-License-Identifier: MIT
  */
@@ -7,6 +7,10 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 
 #include "mono34-layouts.dtsi"
+
+// TPS43 (Azoteq IQS572) trackpad on I2C1 (GP14/GP15) + GP26/GP27. Comment this
+// line out to build firmware for a bare mono34 with no trackpad attached.
+// #include "mono34-trackpad.dtsi"
 
 &mono34_layout {
     transform = <&default_transform>;
@@ -49,12 +53,12 @@
      * If your PCB has the diodes the other way round, change this to
      * "row2col" and swap the GPIO flags between the two lists.
      *
-     * Pins are addressed as raw RP2040 GPIOs (&gpio0 N == GPN on the
-     * silkscreen) rather than through the &pro_micro nexus. The nexus uses
-     * Arduino Pro Micro pad numbers, which do NOT line up with GP numbers
-     * above D9 (D10=GP21, D14=GP20, D15=GP22, D16=GP23, A0..A3=GP26..GP29)
-     * and which swap D0/D1; it also has no entry at all for GP13. Using
-     * &gpio0 keeps this file readable straight off the board.
+     * Pins go through the board's &zero_d nexus, which maps 1:1 onto the
+     * RP2040 GPIOs (&zero_d N == GPN on the silkscreen). Every pin used here
+     * is on the castellated edge of the RP2040-Zero: GP0..GP15 and GP26..GP29
+     * are edge pins, while GP17..GP25 are solder pads on the back and GP16 is
+     * wired to the onboard WS2812 (left out of the board devicetree, but still
+     * on that net physically -- avoid it for matrix lines).
      */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
@@ -62,23 +66,23 @@
         diode-direction = "col2row";
 
         col-gpios
-            = <&gpio0 9 GPIO_ACTIVE_HIGH>
-            , <&gpio0 8 GPIO_ACTIVE_HIGH>
-            , <&gpio0 7 GPIO_ACTIVE_HIGH>
-            , <&gpio0 6 GPIO_ACTIVE_HIGH>
-            , <&gpio0 5 GPIO_ACTIVE_HIGH>
-            , <&gpio0 4 GPIO_ACTIVE_HIGH>
-            , <&gpio0 3 GPIO_ACTIVE_HIGH>
-            , <&gpio0 2 GPIO_ACTIVE_HIGH>
-            , <&gpio0 1 GPIO_ACTIVE_HIGH>
-            , <&gpio0 0 GPIO_ACTIVE_HIGH>
+            = <&zero_d 9 GPIO_ACTIVE_HIGH>
+            , <&zero_d 8 GPIO_ACTIVE_HIGH>
+            , <&zero_d 7 GPIO_ACTIVE_HIGH>
+            , <&zero_d 6 GPIO_ACTIVE_HIGH>
+            , <&zero_d 5 GPIO_ACTIVE_HIGH>
+            , <&zero_d 4 GPIO_ACTIVE_HIGH>
+            , <&zero_d 3 GPIO_ACTIVE_HIGH>
+            , <&zero_d 2 GPIO_ACTIVE_HIGH>
+            , <&zero_d 1 GPIO_ACTIVE_HIGH>
+            , <&zero_d 0 GPIO_ACTIVE_HIGH>
             ;
 
         row-gpios
-            = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&zero_d 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&zero_d 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&zero_d 12 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&zero_d 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
     };
 };
