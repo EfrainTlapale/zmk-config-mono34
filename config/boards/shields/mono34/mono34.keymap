@@ -23,6 +23,8 @@
 #define MOUSE   5
 
 #define HYPER LS(LC(LA(LGUI)))
+#define MAC_SNIP      LG(LC(LS(N4)))
+#define MAC_SNIP_FILE LG(LS(N4))
 
 &sk {
     release-after-ms = <3000>;
@@ -127,7 +129,7 @@
             display-name = "Ext";
             bindings = <
         //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
-            &kp ESC    &none      &mo MOUSE  &none      &none          &none      &none      &none      &none      &kp PSCRN
+            &kp ESC    &none      &mo MOUSE  &none      &none          &none      &none    &kp MAC_SNIP_FILE &kp MAC_SNIP &kp PSCRN
         //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
             &kp LALT   &kp LSHFT  &kp LCTRL  &kp LGUI   &kp HYPER      &kp LEFT   &kp DOWN   &kp UP     &kp RIGHT  &none
         //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
