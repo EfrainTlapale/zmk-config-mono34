@@ -1,10 +1,16 @@
 # Build matrix for GitHub Actions.
 #
-# The SparkFun Pro Micro RP2040 is USB-only, so there is a single firmware
-# image (no left/right, no settings_reset — to wipe an RP2040 you flash
-# flash_nuke.uf2 instead).
+# mono34 is a wireless unibody on a single nice!nano v2, so there is one
+# firmware image. On ZMK main the nice!nano v2 is `nice_nano//zmk` (the 2.0.0
+# revision is the default; the old `nice_nano_v2` name is gone).
+#
+# settings_reset wipes the Bluetooth bonds stored in flash: flash it if pairing
+# gets into a bad state, then flash mono34 again.
 ---
 include:
-  - board: sparkfun_pro_micro_rp2040//zmk
+  - board: nice_nano//zmk
     shield: mono34
     artifact-name: mono34
+  - board: nice_nano//zmk
+    shield: settings_reset
+    artifact-name: settings_reset

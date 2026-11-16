@@ -1,5 +1,9 @@
 /*
- * mono34 - 34 key unibody, Sweep-style layout, Pro Micro interconnect.
+ * mono34 - 34 key wireless unibody, Sweep-style layout, single nice!nano v2.
+ *
+ * Matches the PCB `mono34_unibody_inserts` in ergogen/config.yaml: the
+ * nice!nano sits on the back of the PCB, components facing the base, and the
+ * matrix nets there are named after the Pro Micro pins (P16 == &pro_micro 16).
  *
  * SPDX-License-Identifier: MIT
  */
@@ -10,6 +14,16 @@
 
 &mono34_layout {
     transform = <&default_transform>;
+};
+
+/*
+ * D16 (P0.10) drives the left pinky column, and D16/D10 are the nRF52840's
+ * NFC pins. ZMK's nice_nano board does not hand them over as GPIOs, so the
+ * shield does (since Zephyr 4.1 this is a UICR devicetree property; it
+ * replaced CONFIG_NFCT_PINS_AS_GPIOS).
+ */
+&uicr {
+    nfct-pins-as-gpios;
 };
 
 / {
@@ -23,7 +37,8 @@
 
     /*
      * 34 keys on a 4x10 matrix. The three alpha rows use all ten columns;
-     * the four thumb keys hang off row 3 under columns 3..6.
+     * the four thumb keys are on row 3 and share the index and inner
+     * columns of each half (columns 3..6).
      *
      *  SW1  SW2  SW3  SW4  SW5    SW6  SW7  SW8  SW9  SW10
      *  SW11 SW12 SW13 SW14 SW15   SW16 SW17 SW18 SW19 SW20
@@ -44,17 +59,18 @@
 
     /*
      * col2row: the columns are driven (outputs) and the rows are read
-     * (inputs with pull-downs). Diode cathodes face the row lines.
+     * (inputs with pull-downs). On the PCB every diode's cathode (pad 1) is
+     * on the row net.
      *
-     * If your PCB has the diodes the other way round, change this to
-     * "row2col" and swap the GPIO flags between the two lists.
+     * Columns, physically left to right (ergogen column_net):
+     *   left  pinky P16, ring P14, middle P15, index P18, inner P19
+     *   right inner P5,  index P6, middle P7,  ring P8,   pinky P9
+     * Rows: top P21, home P20, bottom P0, thumbs P4.
+     * Thumbs, left to right: left tucky (index col, P18), left reachy (inner
+     * col, P19), right reachy (P5), right tucky (P6) -> RC(3,3)..RC(3,6).
      *
-     * Pins are addressed as raw RP2040 GPIOs (&gpio0 N == GPN on the
-     * silkscreen) rather than through the &pro_micro nexus. The nexus uses
-     * Arduino Pro Micro pad numbers, which do NOT line up with GP numbers
-     * above D9 (D10=GP21, D14=GP20, D15=GP22, D16=GP23, A0..A3=GP26..GP29)
-     * and which swap D0/D1; it also has no entry at all for GP13. Using
-     * &gpio0 keeps this file readable straight off the board.
+     * Free for later: D1, D2, D3 (a nice!view), D10, and the nice!nano's
+     * extra pins P1.01, P1.02, P1.07 (wired to pads on the PCB).
      */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
@@ -62,23 +78,23 @@
         diode-direction = "col2row";
 
         col-gpios
-            = <&gpio0 0 GPIO_ACTIVE_HIGH>
-            , <&gpio0 1 GPIO_ACTIVE_HIGH>
-            , <&gpio0 2 GPIO_ACTIVE_HIGH>
-            , <&gpio0 3 GPIO_ACTIVE_HIGH>
-            , <&gpio0 4 GPIO_ACTIVE_HIGH>
-            , <&gpio0 5 GPIO_ACTIVE_HIGH>
-            , <&gpio0 6 GPIO_ACTIVE_HIGH>
-            , <&gpio0 7 GPIO_ACTIVE_HIGH>
-            , <&gpio0 8 GPIO_ACTIVE_HIGH>
-            , <&gpio0 9 GPIO_ACTIVE_HIGH>
+            = <&pro_micro 16 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 14 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 15 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 18 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 19 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 5 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 6 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 7 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 8 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 9 GPIO_ACTIVE_HIGH>
             ;
 
         row-gpios
-            = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 13 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 12 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-            , <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            = <&pro_micro 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
             ;
     };
 };
